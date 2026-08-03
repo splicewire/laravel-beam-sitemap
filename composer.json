@@ -1,0 +1,79 @@
+{
+    "name": "splicewire/laravel-beam-sitemap",
+    "description": "The sitemap arm of the schemastud beam family (free-tier, ADR-0166): the SitemapSource contract + SitemapSourceRegistry + a /sitemap.xml controller + the chunked-generate command + the RouteSitemapSource MDX/static-page bridge — all relocated DOWN from laravel-satellite, which had zero satellite coupling. A sitemap is intrinsic to any beam site that serves public content, so the seam homes at the tier of the content, not the consumer-app backend. Base URL is a port (SitemapBaseUrlResolver) whose default returns config('app.url') — single-tenant/retrofit-safe. Consumers register their own sources onto the registry; the arm owns the plumbing, never the data.",
+    "keywords": [
+        "laravel",
+        "schemastud",
+        "beam",
+        "sitemap",
+        "seo"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stephen Rushing",
+            "email": "stephen@rushing.dev"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "spatie/laravel-sitemap": "^8.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "phpunit/phpunit": "^11.0|^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Splicewire\\Beam\\Sitemap\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Splicewire\\Beam\\Sitemap\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Splicewire\\Beam\\Sitemap\\BeamSitemapServiceProvider"
+            ]
+        },
+        "package-topology": {
+            "because": "the sitemap arm is a lean, free-tier beam-family seam: pure Illuminate + Spatie, no upward reach into satellite/beam-ux/tenancy",
+            "mustNotRequire": [
+                "splicewire/laravel-satellite",
+                "splicewire/laravel-beam-ux",
+                "splicewire/tower"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "test": "@php vendor/bin/phpunit",
+        "pint": "@php -d memory_limit=512M vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
+}
