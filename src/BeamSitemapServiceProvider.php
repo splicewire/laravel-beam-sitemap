@@ -45,7 +45,6 @@ class BeamSitemapServiceProvider extends ServiceProvider
         }
 
         $this->registerRouteSource();
-        $this->registerAliases();
     }
 
     /**
@@ -60,29 +59,5 @@ class BeamSitemapServiceProvider extends ServiceProvider
 
         $this->app->make(SitemapSourceRegistry::class)
             ->register(RouteSitemapSource::class);
-    }
-
-    /**
-     * BC net for the pre-relocation `Splicewire\Satellite\Sitemap\*` FQCNs
-     * (ADR-0166; mirrors the recohere down-move class_alias pattern). Any host or
-     * test still type-hinting the old satellite FQCNs resolves to the new arm's
-     * classes. Guarded so a real `laravel-satellite` install (which keeps only its
-     * vertical sources) never double-declares.
-     */
-    protected function registerAliases(): void
-    {
-        $map = [
-            \Splicewire\Beam\Sitemap\Contracts\SitemapSource::class => 'Splicewire\\Satellite\\Sitemap\\Contracts\\SitemapSource',
-            \Splicewire\Beam\Sitemap\SitemapSourceRegistry::class => 'Splicewire\\Satellite\\Sitemap\\SitemapSourceRegistry',
-            \Splicewire\Beam\Sitemap\RouteSitemapSource::class => 'Splicewire\\Satellite\\Sitemap\\RouteSitemapSource',
-            \Splicewire\Beam\Sitemap\Http\SitemapController::class => 'Splicewire\\Satellite\\Sitemap\\Http\\SitemapController',
-            \Splicewire\Beam\Sitemap\Console\GenerateSitemapCommand::class => 'Splicewire\\Satellite\\Sitemap\\Console\\GenerateSitemapCommand',
-        ];
-
-        foreach ($map as $new => $old) {
-            if (! class_exists($old) && ! interface_exists($old)) {
-                class_alias($new, $old);
-            }
-        }
     }
 }
