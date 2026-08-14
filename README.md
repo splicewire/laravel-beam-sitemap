@@ -10,7 +10,7 @@ Relocated **down** from `laravel-satellite` (which had zero satellite coupling):
 - `SitemapSourceRegistry` — collects registered sources; the arm owns the plumbing, never the data.
 - `RouteSitemapSource` — the MDX/static-page bridge (enumerates `content.*` / `home` named routes).
 - `Http\SitemapController` — renders `/sitemap.xml` from every registered source (cached).
-- `Console\GenerateSitemapCommand` — `beam:sitemap:generate`, the chunked large-catalog escape hatch.
+- `Console\GenerateSitemapCommand` — `splicewire:beam:sitemap:generate`, the chunked large-catalog escape hatch.
 
 ## The base-URL port
 

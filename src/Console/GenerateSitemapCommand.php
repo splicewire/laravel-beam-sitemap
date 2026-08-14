@@ -16,11 +16,12 @@ use Splicewire\Beam\Sitemap\SitemapSourceRegistry;
  *
  * Relocated down from `laravel-satellite` (ADR-0166). The command signature moved
  * `splicewire:sitemap:generate` → `beam:sitemap:generate` to mirror the package
- * tree (ADR-0167).
+ * tree (ADR-0167), then to `splicewire:beam:sitemap:generate` — ADR-0167's form had
+ * dropped the vendor segment, which ADR-0171 (superseding it) restores.
  */
 class GenerateSitemapCommand extends Command
 {
-    protected $signature = 'beam:sitemap:generate {--chunk=10000 : Maximum URLs per sitemap file}';
+    protected $signature = 'splicewire:beam:sitemap:generate {--chunk=10000 : Maximum URLs per sitemap file}';
 
     protected $description = 'Write a chunked sitemap + index to public/ from the registered sources (large-catalog escape hatch; bypasses any live-route site-mode gate).';
 
