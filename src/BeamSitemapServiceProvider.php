@@ -22,7 +22,12 @@ class BeamSitemapServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/beam.php', 'beam');
+        // Merged at `beam.sitemap`, from config/beam/sitemap.php — the family's nested shape
+        // (beam/core, beam/taxonomy, …). The key is unchanged; only the file moved. It used to ship
+        // a whole `config/beam.php`, which claims the ENTIRE `beam` namespace as one file and races
+        // the `config/beam/` directory every other beam package publishes into: whichever Laravel
+        // loads second wins, so a host with both could silently lose either this config or theirs.
+        $this->mergeConfigFrom(__DIR__.'/../config/beam/sitemap.php', 'beam.sitemap');
 
         // The base-URL port (ADR-0166 §2). Default returns config('app.url') —
         // single-tenant/retrofit-safe. laravel-beam-tenancy re-binds it.
@@ -40,7 +45,7 @@ class BeamSitemapServiceProvider extends ServiceProvider
             ]);
 
             $this->publishes([
-                __DIR__.'/../config/beam.php' => config_path('beam.php'),
+                __DIR__.'/../config/beam/sitemap.php' => config_path('beam/sitemap.php'),
             ], 'beam-sitemap-config');
         }
 
