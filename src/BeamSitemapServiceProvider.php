@@ -3,6 +3,7 @@
 namespace Splicewire\Beam\Sitemap;
 
 use Illuminate\Support\ServiceProvider;
+use Rushing\Popcorn\Registries\RegistryIndex;
 use Splicewire\Beam\Sitemap\Console\GenerateSitemapCommand;
 use Splicewire\Beam\Sitemap\Resolvers\ConfigSitemapBaseUrlResolver;
 use Splicewire\Beam\Sitemap\Resolvers\SitemapBaseUrlResolver;
@@ -50,6 +51,19 @@ class BeamSitemapServiceProvider extends ServiceProvider
         }
 
         $this->registerRouteSource();
+
+        // Declaring and indexing are two acts (registry-kernel 21 D1). SitemapSourceRegistry declares
+        // `beam.sitemap.sources`; this is where that root becomes routable through the shared index.
+        //
+        // AFTER registerRouteSource() deliberately, and unconditionally regardless of what it did: a
+        // host that has disabled the route source, or that publishes nothing at all, still OWNS this
+        // branch of the keyspace (04 D1 — index membership must not be a function of host
+        // composition). An empty `beam.sitemap.sources` is the correct reading of "this site serves no
+        // public URLs", not a gap.
+        $this->app->make(RegistryIndex::class)->describe(
+            $this->app->make(SitemapSourceRegistry::class),
+            by: self::class,
+        );
     }
 
     /**
