@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "illuminate/contracts": "^11.0|^12.0|^13.0",
         "illuminate/support": "^11.0|^12.0|^13.0",
         "rushing/laravel-popcorn": "*",
@@ -59,7 +59,7 @@
             ]
         },
         "package-topology": {
-            "because": "the sitemap arm is a lean, free-tier beam-family seam: pure Illuminate + Spatie, no upward reach into satellite/beam-ux/tenancy",
+            "because": "the sitemap arm is a lean, free-tier beam-family seam: Illuminate + Spatie plus a DOWNWARD reach into the rushing foundation tier (rushing/laravel-popcorn, for registry-kernel conformance \u2014 the same edge splicewire/laravel-beam itself takes), and no UPWARD reach into satellite/beam-ux/tenancy. The mustNotRequire list below is the normative half of this stanza; this prose is descriptive and the two must not be read as one rule (registry-kernel 60)",
             "mustNotRequire": [
                 "splicewire/laravel-satellite",
                 "splicewire/laravel-beam-ux",
