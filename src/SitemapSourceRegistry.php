@@ -12,7 +12,6 @@ use Rushing\Popcorn\Registries\Key;
 use Rushing\Popcorn\Registries\OnDuplicate;
 use Rushing\Popcorn\Registries\Optionality;
 use Rushing\Popcorn\Registries\Registry;
-use Rushing\Popcorn\Registries\RegistryArity;
 use Rushing\Popcorn\Registries\RegistryKey;
 use Splicewire\Beam\Sitemap\Contracts\SitemapSource;
 
@@ -25,7 +24,7 @@ use Splicewire\Beam\Sitemap\Contracts\SitemapSource;
  *
  * ## Conformed to the Popcorn kernel (registry-kernel ticket 38)
  *
- * Archetype **a / `RunAll`**. Two things about this row were unlike every other one in the sweep, and
+ * An enumeration of sources. Two things about this row were unlike every other one in the sweep, and
  * both are recorded here because they are the reason the declaration reads the way it does.
  *
  * ### 1. This registry had NO KEYS — it was a LIST
@@ -49,7 +48,7 @@ use Splicewire\Beam\Sitemap\Contracts\SitemapSource;
  * `SitemapArmTest`, and `laravel-satellite`'s sitemap tests). An anonymous class has no name a key can
  * be derived from, so every one of them lands on the shared `anonymous` segment; under `Supersede`
  * two ad-hoc sources registered in one boot would become one and half the sitemap would vanish.
- * `Admit` keeps both live under the one key and defers to read time, and under `RunAll` several
+ * `Admit` keeps both live under the one key and defers to read time, and when enumerating sources several
  * matches at a key are the ANSWER rather than the error, so nothing downstream has to care.
  *
  * The consequence to know: `resolve()` at a key holding more than one entry throws
@@ -68,15 +67,10 @@ use Splicewire\Beam\Sitemap\Contracts\SitemapSource;
  */
 #[IsRegistry(
     root: 'beam.sitemap.sources',
-    of: 'contributors of public, canonical URLs to the beam sitemap — one per body of content a host publishes',
-    arity: RegistryArity::RunAll,
     entryType: SitemapSource::class,
     onDuplicate: OnDuplicate::Admit,
     optionality: Optionality::Optional,
-    note: 'Keys are MINTED from the entry class via Key::fromClass() — this registry was a keyless list '
-        .'and no read has ever consulted a key. Anonymous sources (the estate registers several in '
-        .'tests) share the `anonymous` segment, which is why OnDuplicate is Admit: Supersede would '
-        .'collapse two ad-hoc sources registered in one boot into one, silently halving a sitemap.',
+    description: 'contributors of public, canonical URLs to the beam sitemap — one per body of content a host publishes. Keys are MINTED from the entry class via Key::fromClass() — this registry was a keyless list and no read has ever consulted a key. Anonymous sources (the estate registers several in tests) share the `anonymous` segment, which is why OnDuplicate is Admit: Supersede would collapse two ad-hoc sources registered in one boot into one, silently halving a sitemap.',
 )]
 class SitemapSourceRegistry implements Gated, Registry
 {
