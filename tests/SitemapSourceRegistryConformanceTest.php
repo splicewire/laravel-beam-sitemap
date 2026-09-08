@@ -93,7 +93,7 @@ class SitemapSourceRegistryConformanceTest extends TestCase
      * Sweep amendment A4 says re-registering an existing key SUPERSEDES AND APPENDS, moving the entry
      * to the end where a plain array assignment held its slot. **That does not apply to this row**, and
      * the difference is worth pinning rather than assuming: this registry declares
-     * `OnDuplicate::Admit`, so a second registration at the same key does not displace the first —
+     * `OnKeyDuplicate::Admit`, so a second registration at the same key does not displace the first —
      * both stay live, in registration order, which is exactly what the list it replaced did.
      *
      * This is not academic. Every anonymous source in the estate lands on the one `anonymous` key, so

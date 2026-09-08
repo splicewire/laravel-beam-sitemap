@@ -9,8 +9,8 @@ use Rushing\Popcorn\Registries\Exceptions\InvalidRegistryKey;
 use Rushing\Popcorn\Registries\Gated;
 use Rushing\Popcorn\Registries\IsRegistry;
 use Rushing\Popcorn\Registries\Key;
-use Rushing\Popcorn\Registries\OnDuplicate;
-use Rushing\Popcorn\Registries\Optionality;
+use Rushing\Popcorn\Registries\OnKeyDuplicate;
+use Rushing\Popcorn\Registries\PopulationRequirement;
 use Rushing\Popcorn\Registries\Registry;
 use Rushing\Popcorn\Registries\RegistryKey;
 use Splicewire\Beam\Sitemap\Contracts\SitemapSource;
@@ -40,7 +40,7 @@ use Splicewire\Beam\Sitemap\Contracts\SitemapSource;
  * A minted key is pure ADDITION — it buys the arm's sources an address in the shared index, which is
  * the whole point of the lift, and it takes nothing away, because no read ever consulted a key.
  *
- * ### 2. `OnDuplicate::Admit` is REQUIRED here, not preferred
+ * ### 2. `OnKeyDuplicate::Admit` is REQUIRED here, not preferred
  *
  * A PHP list appends unconditionally: registering the same thing twice yields two entries and both
  * run. `Supersede` would silently collapse them, which is a behaviour change, and it is not
@@ -68,9 +68,9 @@ use Splicewire\Beam\Sitemap\Contracts\SitemapSource;
 #[IsRegistry(
     root: 'beam.sitemap.sources',
     entryType: SitemapSource::class,
-    onDuplicate: OnDuplicate::Admit,
-    optionality: Optionality::Optional,
-    description: 'contributors of public, canonical URLs to the beam sitemap — one per body of content a host publishes. Keys are MINTED from the entry class via Key::fromClass() — this registry was a keyless list and no read has ever consulted a key. Anonymous sources (the estate registers several in tests) share the `anonymous` segment, which is why OnDuplicate is Admit: Supersede would collapse two ad-hoc sources registered in one boot into one, silently halving a sitemap.',
+    onKeyDuplicate: OnKeyDuplicate::Admit,
+    populationRequirement: PopulationRequirement::Optional,
+    description: 'contributors of public, canonical URLs to the beam sitemap — one per body of content a host publishes. Keys are MINTED from the entry class via Key::fromClass() — this registry was a keyless list and no read has ever consulted a key. Anonymous sources (the estate registers several in tests) share the `anonymous` segment, which is why OnKeyDuplicate is Admit: Supersede would collapse two ad-hoc sources registered in one boot into one, silently halving a sitemap.',
 )]
 class SitemapSourceRegistry implements Gated, Registry
 {
