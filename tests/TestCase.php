@@ -4,6 +4,7 @@ namespace Splicewire\Beam\Sitemap\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
 use Rushing\Popcorn\Laravel\PopcornServiceProvider;
+use Spatie\Sitemap\SitemapServiceProvider;
 use Splicewire\Beam\Sitemap\BeamSitemapServiceProvider;
 
 abstract class TestCase extends Orchestra
@@ -23,6 +24,8 @@ abstract class TestCase extends Orchestra
             // index assertion silently tests an empty index, and the suite stays green over a registry
             // nothing can route to (registry-kernel 27 D3).
             PopcornServiceProvider::class,
+            // The production dependency registers the views used by Sitemap::render().
+            SitemapServiceProvider::class,
             BeamSitemapServiceProvider::class,
         ];
     }
