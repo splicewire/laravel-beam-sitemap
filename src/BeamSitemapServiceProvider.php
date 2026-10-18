@@ -51,6 +51,15 @@ class BeamSitemapServiceProvider extends ServiceProvider
 
         $this->registerRouteSource();
 
+        // Self-register into beam-core's install manifest (B2-2). String/bound-guarded: this
+        // package does not require beam-core; without it the binding simply doesn't exist.
+        if ($this->app->bound('Splicewire\\Beam\\Install\\BeamInstallManifest')) {
+            $this->app->make('Splicewire\\Beam\\Install\\BeamInstallManifest')->register(
+                package: 'splicewire/laravel-beam-sitemap',
+                publishTags: ['beam-sitemap-config'],
+                migrates: false,
+            );
+        }
     }
 
     /**
