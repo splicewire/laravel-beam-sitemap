@@ -1,0 +1,86 @@
+---
+title: Sitemap sources
+segment: beam.sitemap.sources
+nav_order: 100
+excerpt: The contributors of public, canonical URLs that together make up a site's sitemap.xml.
+---
+
+# Sitemap sources
+
+`beam.sitemap.sources` collects every **sitemap source**: something that contributes public,
+canonical URLs to the site's `/sitemap.xml`. Each body of content a host publishes has its own source.
+The sitemap package supplies the plumbing (the registry, the route and the generator command) and
+never the data, so a site's sitemap is exactly the sources registered on it.
+
+{/* registry-facts:start — generated from the #[IsRegistry] declaration by `splicewire:beam:docs:registries:scaffold`. Rerun the command; do not edit between these markers. */}
+
+- **Root:** `beam.sitemap.sources`
+- **Entries:** `Splicewire\Beam\Sitemap\Contracts\SitemapSource`
+- **Duplicate keys:** Admit — every registration is kept; a single-entry read of a shared key refuses as ambiguous
+- **Population:** Optional — an empty registry is normal
+- **Order:** `100` (display order, ascending)
+- **Declared by:** `Splicewire\Beam\Sitemap\SitemapSourceRegistry`
+
+{/* registry-facts:end */}
+
+## What ships
+
+The package registers `RouteSitemapSource` when `beam.sitemap.enabled` is on. It lists the named
+routes matching `beam.sitemap.route_name_patterns` (`home` and `content.*` by default) and skips any
+route with a parameter, since an unfilled placeholder has no canonical URL. Other packages add their
+own: `splicewire/laravel-beam-ux` registers a source for published entries, and a satellite registers
+its vertical's URLs.
+
+## Writing a source
+
+Implement `SitemapSource`, whose one method yields `Spatie\Sitemap\Tags\Url` objects (or anything
+`Sitemapable`), and register it at boot:
+
+```php
+use Spatie\Sitemap\Tags\Url;
+use Splicewire\Beam\Sitemap\Contracts\SitemapSource;
+use Splicewire\Beam\Sitemap\SitemapSourceRegistry;
+
+class ProductSitemapSource implements SitemapSource
+{
+    public function urls(): iterable
+    {
+        foreach (Product::published()->cursor() as $product) {
+            yield Url::create(route('products.show', $product));
+        }
+    }
+}
+
+app(SitemapSourceRegistry::class)->register(ProductSitemapSource::class);
+```
+
+Register a class name and the container builds it when the sitemap is rendered, or register an
+instance. Yield only real, public, canonical pages: never gated or entitlement-only content, and never
+an unbounded space of parameter values.
+
+## Keys come from the class
+
+Sources were always a list, run in order, and nothing looks one up by name. Each is keyed by its own
+class (`EntrySitemapSource` becomes `beam.sitemap.sources.entry-sitemap-source`) so it has an address
+in the registry index. Anonymous classes can't produce a key and share the `anonymous` segment.
+
+## What a duplicate means here
+
+The duplicate policy is **admit**: registering at a taken key keeps both entries, and both run.
+That's what lets several anonymous sources coexist. Read the registry with `all()` or `urls()`. A
+single-entry `resolve()` at a key holding several sources throws as ambiguous.
+
+## Who reads it
+
+- The `/sitemap.xml` route renders every source's URLs, cached for `beam.sitemap.cache_ttl` seconds.
+  A source that implements `LiveSitemapSource` turns the cache off, so a change in who can see its
+  pages applies on the next request.
+- `php artisan splicewire:beam:sitemap:generate` writes the sitemap to disk in chunks, for catalogs
+  too large to render on request.
+
+## Going deeper
+
+The source is
+[`SitemapSourceRegistry`](https://github.com/splicewire/laravel-beam-sitemap/blob/main/src/SitemapSourceRegistry.php).
+The [README](https://github.com/splicewire/laravel-beam-sitemap#readme) covers the base-URL port,
+which a tenancy host rebinds to the active tenant's domain.
