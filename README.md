@@ -27,8 +27,22 @@ app(SitemapSourceRegistry::class)->register(MyVerticalSitemapSource::class);
 ```
 
 - `laravel-beam-ux` registers `EntrySitemapSource` (entries gated by route × published-marking × entitlement).
-- `laravel-satellite` keeps only its vertical/generated sources.
+- `laravel-satellite` serves the gated `/sitemap.xml` and `/robots.txt` routes and registers no source of its
+  own; each satellite app registers its vertical or generated-page sources.
 
 Config lives under `beam.sitemap.*` (moved from `splicewire.satellite.sitemap.*`).
+
+## Registries
+
+This package declares one registry:
+
+- [`beam.sitemap.sources`](docs/registries/beam.sitemap.sources.mdx): the sources whose URLs make up
+  `/sitemap.xml`. The package registers `RouteSitemapSource` into it while `beam.sitemap.enabled` is on.
+
+It registers into one registry it doesn't own:
+
+- [`beam.install.steps`](https://github.com/splicewire/laravel-beam/blob/main/docs/registries/beam.install.steps.mdx),
+  owned by `splicewire/laravel-beam`: the install step that publishes the sitemap config. It registers only when
+  Beam core is installed.
 
 [ADR-0166]: the sitemap seam is a beam-family arm, not a satellite concern.
