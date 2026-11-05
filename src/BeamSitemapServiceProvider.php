@@ -3,6 +3,7 @@
 namespace Splicewire\Beam\Sitemap;
 
 use Illuminate\Support\ServiceProvider;
+use Rushing\Popcorn\Registries\Registrant;
 use Splicewire\Beam\Sitemap\Console\GenerateSitemapCommand;
 use Splicewire\Beam\Sitemap\Resolvers\ConfigSitemapBaseUrlResolver;
 use Splicewire\Beam\Sitemap\Resolvers\SitemapBaseUrlResolver;
@@ -22,6 +23,11 @@ class BeamSitemapServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        Registrant::scoped('splicewire/laravel-beam-sitemap', $this->registerScoped(...));
+    }
+
+    private function registerScoped(): void
+    {
         // Merged at `beam.sitemap`, from config/beam/sitemap.php — the family's nested shape
         // (beam/core, beam/taxonomy, …). The key is unchanged; only the file moved. It used to ship
         // a whole `config/beam.php`, which claims the ENTIRE `beam` namespace as one file and races
@@ -38,6 +44,11 @@ class BeamSitemapServiceProvider extends ServiceProvider
     }
 
     public function boot(): void
+    {
+        Registrant::scoped('splicewire/laravel-beam-sitemap', $this->bootScoped(...));
+    }
+
+    private function bootScoped(): void
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
