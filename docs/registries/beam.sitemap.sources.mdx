@@ -68,9 +68,10 @@ in the registry index. Anonymous classes can't produce a key and share the `anon
 
 ## What a duplicate means here
 
-The duplicate policy is **admit**: registering at a taken key keeps both entries, and both run.
-That's what lets several anonymous sources coexist. Read the registry with `all()` or `urls()`. A
-single-entry `resolve()` at a key holding several sources throws as ambiguous.
+The [**duplicate-key policy**](/beam/docs/foundations/registries#key-policies) is **admit**:
+registering at a taken key keeps both entries, and both run. That's what lets several anonymous
+sources coexist. Read the registry with `all()` or `urls()`. A single-entry `resolve()` at a key
+holding several sources throws as ambiguous.
 
 ## Who reads it
 
